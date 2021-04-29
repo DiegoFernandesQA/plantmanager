@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -15,10 +15,29 @@ import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
 export function UserIdentification(){
+
+  const [isFocused, setIsFocused] = useState(false) //use State verifica o estado de um objeto
+  const [isFilled, setIsFilled] = useState(false)
+  const [name, setName] = useState<string>()
+
+  function handleInputBlur(){
+    setIsFocused(false) // se estiver fora do input = state false
+    setIsFilled(!!name)
+  }
+
+  function handleInputFocus(){
+    setIsFocused(true) // se estiver dentro do inpute recebe state true
+  }
+
+  function handleInputChange(value: string){
+    setIsFilled(!!value) // vai verificar se o campo está preenchido e devolver um true como resposta
+    setName(value)
+  }
+
   return(
     <KeyboardAvoidingView 
       style={styles.container}
-      behavior= {Platform.OS === "android" ? "padding" : "height" } 
+      behavior= {Platform.OS === "android" ? "height" : "padding" } 
     >
 
       <SafeAreaView style= {styles.container}>
@@ -26,22 +45,33 @@ export function UserIdentification(){
 
           <View style= {styles.form}>
 
-            <Text style= {styles.emoji}>
-              😀
-            </Text>
+            <View style= {styles.header}>
 
-            <Text style= {styles.title}>
-              Como podemos{'\n'}
-              chamar você?
-            </Text>
+              <Text style= {styles.emoji}>
+                {isFilled ? '😀' : '😄'}
+              </Text>
+
+              <Text style= {styles.title}>
+                Como podemos{'\n'}
+                chamar você?
+              </Text>
+
+            </View>
             
             <TextInput 
-              style= {styles.input}
-              placeholder = "Digite um nome" 
+              style= {[
+                styles.input,
+                (isFocused || isFilled) && 
+                { borderColor: colors.green }
+              ]}
+              placeholder = "Digite um nome"
+              onBlur = {handleInputBlur} //quando o usuario sai do text input
+              onFocus = {handleInputFocus} // quando o user entra no text input
+              onChangeText = {handleInputChange}
             />
 
             <View style= {styles.footer}>
-              <Button />
+              <Button/>
             </View>
 
           </View>
@@ -55,7 +85,7 @@ export function UserIdentification(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    widith: '100%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',
   },
@@ -69,6 +99,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 54,
     alignItems: 'center',
     width: '100%'
+  },
+  header: {
+    alignItems: 'center',
   },
   emoji: {
     fontSize: 44
@@ -87,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 32,
     textAlign: 'center',
-    colors: colors.heading,
+    color: colors.heading,
     fontFamily: fonts.heading,
     marginTop: 20
   },

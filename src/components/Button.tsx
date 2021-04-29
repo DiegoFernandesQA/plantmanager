@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: colors.green,
+    color: colors.white,
     fontFamily: fonts.heading
   },
 
